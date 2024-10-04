@@ -7,7 +7,7 @@ abstract class Repository<T, K> {
   Future<List<T>> getAll();
 
   /// Get one record
-  Future<T> getById(K id);
+  Future<T?> getById(K id);
 
   /// Create a record
   Future<K> create(T entity);
@@ -55,20 +55,21 @@ abstract class EntityRepository<K> implements Repository<K, int> {
   }
 
   @override
-  Future<List<K>> getAll() {
-    // TODO: implement getAll
-    throw UnimplementedError();
+  Future<List<K>> getAll() async {
+    final records = await database.query(tableName);
+    return records.map((record) => fromMap(record)).toList();
   }
 
   @override
-  Future<K> getById(int id) {
-    // TODO: implement getById
-    throw UnimplementedError();
+  Future<K?> getById(int id) async {
+    final records =
+        await database.query(tableName, where: 'id = ?', whereArgs: [id]);
+    return records.isNotEmpty ? fromMap(records.first) : null;
   }
 
   @override
-  Future<int> update(K entity) {
-    // TODO: implement update
+  Future<int> update(K entity) async {
+    database.update(tableName, toMap(entity), where: 'id = ?', whereArgs: [id]);
     throw UnimplementedError();
   }
 }
