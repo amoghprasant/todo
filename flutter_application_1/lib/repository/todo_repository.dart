@@ -69,7 +69,12 @@ abstract class EntityRepository<K> implements Repository<K, int> {
 
   @override
   Future<int> update(K entity) async {
-    database.update(tableName, toMap(entity), where: 'id = ?', whereArgs: [id]);
+    database.update(
+      tableName,
+      toMap(entity),
+      where: 'id = ?',
+      whereArgs: [entity],
+    );
     throw UnimplementedError();
   }
 }
